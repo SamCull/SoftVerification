@@ -184,19 +184,6 @@ public class CullenSamTestTask3 {
         assertEquals(0, new Period(1, 5).occurences(sameStartEndList)); //0
     }
 
-    // Commits
-    @Test
-    public void testCalculateWithManagementReduction() {
-        ArrayList<Period> normalPeriods = new ArrayList<>();
-        normalPeriods.add(new Period(2, 5));
-        ArrayList<Period> reducedPeriods = new ArrayList<>();
-        reducedPeriods.add(new Period(5, 7));
-
-        Rate managementRate = new Rate(CarParkKind.MANAGEMENT, new BigDecimal(8), new BigDecimal(4), normalPeriods, reducedPeriods);
-        Period managementStay = new Period(1, 6);
-        assertEquals(new BigDecimal(5.00), managementRate.calculate(managementStay)); //28
-    }
-
     @Test
     public void testInvalidManagementRate() {
         ArrayList<Period> normalPeriods = new ArrayList<>();
@@ -244,7 +231,18 @@ public class CullenSamTestTask3 {
         Rate staffRate = new Rate(CarParkKind.STAFF, new BigDecimal(6), new BigDecimal(3),
                 new ArrayList<>(), new ArrayList<>());
         Period staffStay = new Period(4, 18);
-        assertEquals(new BigDecimal(0), staffRate.calculate(staffStay));
+        assertEquals(new BigDecimal(3), staffRate.calculate(staffStay));
+    }
+    @Test
+    public void testCalculateWithManagementReduction() {
+        ArrayList<Period> normalPeriods = new ArrayList<>();
+        normalPeriods.add(new Period(2, 5));
+        ArrayList<Period> reducedPeriods = new ArrayList<>();
+        reducedPeriods.add(new Period(5, 7));
+
+        Rate managementRate = new Rate(CarParkKind.MANAGEMENT, new BigDecimal(8), new BigDecimal(4), normalPeriods, reducedPeriods);
+        Period managementStay = new Period(1, 6);
+        assertEquals(new BigDecimal(5.00), managementRate.calculate(managementStay)); //28
     }
 
 
