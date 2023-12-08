@@ -30,7 +30,9 @@ public class Rate {
         if (!isValidPeriods(reducedPeriods, normalPeriods)) {
             throw new IllegalArgumentException("The periods overlaps");
         }
-
+        if (this.kind == CarParkKind.STUDENT && (!isValidPeriods(reducedPeriods) || !isValidPeriods(normalPeriods) || !isValidPeriods(reducedPeriods, normalPeriods))) {
+            throw new IllegalArgumentException("The periods overlap for STUDENT rate");
+        }
 
 
 
