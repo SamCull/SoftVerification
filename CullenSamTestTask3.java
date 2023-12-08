@@ -228,7 +228,16 @@ public class CullenSamTestTask3 {
                 new ArrayList<>(Arrays.asList(new Period(2, 5), new Period(10, 12))),
                 new ArrayList<>(Arrays.asList(new Period(6, 8), new Period(14, 16))));
         Period visitorStay = new Period(1, 6);
-        assertEquals(new BigDecimal(15), visitorRate.calculate(visitorStay)); //0
+        assertEquals(new BigDecimal(15), visitorRate.calculate(visitorStay));//0
     }
+    @Test
+    void testCalculateWithStudentKind() {
+        Rate studentRate = new Rate(CarParkKind.STUDENT, new BigDecimal(4), new BigDecimal(2),
+                new ArrayList<>(Arrays.asList(new Period(2, 5), new Period(10, 12))),
+                new ArrayList<>(Arrays.asList(new Period(5, 7), new Period(15, 17))));
+        Period studentStay = new Period(4, 14);
+        assertEquals(new BigDecimal(14), studentRate.calculate(studentStay));
+    }
+
 
 }
