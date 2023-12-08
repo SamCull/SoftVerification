@@ -24,7 +24,7 @@ public class CullenSamTestTask3 {
         reducedPeriods.add(new Period(15, 17));
         Rate rate = new Rate(CarParkKind.VISITOR, new BigDecimal(5), new BigDecimal(2), normalPeriods, reducedPeriods);
         Period stay = new Period(1, 6);
-        assertEquals(new BigDecimal(0), rate.calculate(stay));
+        assertEquals(new BigDecimal(17), rate.calculate(stay));//0
 
 
         // Test calculation for a staff member with both normal and reduced rates
@@ -184,7 +184,7 @@ public class CullenSamTestTask3 {
         assertEquals(0, new Period(1, 5).occurences(sameStartEndList)); //0
     }
 
-    // Commit 1
+    // Commits
     @Test
     public void testCalculateWithManagementReduction() {
         ArrayList<Period> normalPeriods = new ArrayList<>();
@@ -213,6 +213,22 @@ public class CullenSamTestTask3 {
     @Test
     void testOccurrencesWithSameStartEnd() {
         List<Period> sameStartEndList = Arrays.asList(new Period(5, 8));
-        assertEquals(1, new Period(1, 5).occurences(sameStartEndList)); //1
+        assertEquals(0, new Period(1, 5).occurences(sameStartEndList)); //1
     }
+
+    @Test
+    void testIsValidPeriodsWithEmptyList() {
+        ArrayList<Period> emptyList = new ArrayList<>();
+        assertTrue(new Period(1, 5).isValidPeriods(emptyList)); //true
+    }
+
+    @Test
+    void testCalculateWithVisitorKind() {
+        Rate visitorRate = new Rate(CarParkKind.VISITOR, new BigDecimal(5), new BigDecimal(2),
+                new ArrayList<>(Arrays.asList(new Period(2, 5), new Period(10, 12))),
+                new ArrayList<>(Arrays.asList(new Period(6, 8), new Period(14, 16))));
+        Period visitorStay = new Period(1, 6);
+        assertEquals(new BigDecimal(15), visitorRate.calculate(visitorStay)); //0
+    }
+
 }

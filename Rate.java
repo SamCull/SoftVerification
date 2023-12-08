@@ -30,9 +30,11 @@ public class Rate {
         if (!isValidPeriods(reducedPeriods, normalPeriods)) {
             throw new IllegalArgumentException("The periods overlaps");
         }
-        if (this.kind == CarParkKind.MANAGEMENT && !isValidPeriods(reducedPeriods, normalPeriods)) {
+        if (this.kind == CarParkKind.MANAGEMENT && (!isValidPeriods(reducedPeriods) || !isValidPeriods(normalPeriods) || !isValidPeriods(reducedPeriods, normalPeriods))) {
             throw new IllegalArgumentException("The periods overlap for MANAGEMENT rate");
         }
+
+
         this.kind = kind;
         this.hourlyNormalRate = normalRate;
         this.hourlyReducedRate = reducedRate;
@@ -103,12 +105,17 @@ public class Rate {
 
             // Apply reduction
             return totalCost.min(new BigDecimal(5.00));
+        } else if (this.kind == CarParkKind.VISITOR) {
+            // Apply rates for Visitor kind
+            return this.hourlyNormalRate.multiply(BigDecimal.valueOf(normalRateHours))
+                    .add(this.hourlyReducedRate.multiply(BigDecimal.valueOf(reducedRateHours)));
         }
 
         // For other kinds, calculate without reduction
         return this.hourlyNormalRate.multiply(BigDecimal.valueOf(normalRateHours))
                 .add(this.hourlyReducedRate.multiply(BigDecimal.valueOf(reducedRateHours)));
     }
+
 }
 
 
