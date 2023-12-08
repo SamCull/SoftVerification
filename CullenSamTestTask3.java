@@ -239,5 +239,13 @@ public class CullenSamTestTask3 {
         assertEquals(new BigDecimal(14), studentRate.calculate(studentStay));
     }
 
+    @Test
+    void testCalculateWithStaffKind() {
+        // Implementation 4:
+        Rate staffRate = new Rate(CarParkKind.STAFF, new BigDecimal(6), new BigDecimal(3),
+                new ArrayList<>(), new ArrayList<>());
+        Period staffStay = new Period(4, 18);
+        assertEquals(new BigDecimal(0), staffRate.calculate(staffStay));
+    }
 
 }
