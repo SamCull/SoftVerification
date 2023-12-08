@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -68,14 +69,22 @@ public class CullenSamTestTask3 {
         assertThrows(IllegalArgumentException.class, () -> new Rate(CarParkKind.VISITOR, new BigDecimal(5), new BigDecimal(2), overlappingPeriods, overlappingPeriods));
     }
     @Test
-    public void testValidPeriods() {
+    public void testIsValidPeriods() {
         ArrayList<Period> validPeriods = new ArrayList<>();
         validPeriods.add(new Period(2, 5));
         validPeriods.add(new Period(6, 9));
 
+        // New test for valid periods
+        assertTrue(new Period(1, 5).isValidPeriods(validPeriods));
 
+        // Additional test for a different valid period
+        ArrayList<Period> anotherValidPeriods = new ArrayList<>();
+        anotherValidPeriods.add(new Period(12, 15));
+        assertTrue(new Period(10, 11).isValidPeriods(anotherValidPeriods));
 
-
+        // Test with an empty list (should always be valid)
+        ArrayList<Period> emptyList = new ArrayList<>();
+        assertTrue(new Period(1, 5).isValidPeriods(emptyList));
     }
 
 
@@ -157,19 +166,22 @@ public class CullenSamTestTask3 {
         assertThrows(IllegalArgumentException.class, () -> new Period(5, 3).duration());
     }
 
-
     @Test
-    void occurences() {
+    void testOccurrences() {
         // Test occurrences in an empty list
-        assertEquals(0, new Period(1, 5).occurences(new ArrayList<>())); // passes
-
+        assertEquals(0, new Period(1, 5).occurences(new ArrayList<>()));
 
         // Test occurrences in a list with non-overlapping periods
-        assertEquals(0, new Period(1, 5).occurences(new ArrayList<>(Arrays.asList(new Period(6, 8), new Period(10, 12))))); // passes
-
+        List<Period> nonOverlappingList = Arrays.asList(new Period(6, 8), new Period(10, 12));
+        assertEquals(0, new Period(1, 5).occurences(nonOverlappingList));
 
         // Test occurrences in a list with overlapping periods
-        assertEquals(2, new Period(1, 5).occurences(new ArrayList<>(Arrays.asList(new Period(2, 3), new Period(4, 6), new Period(5, 8))))); // fails
+        List<Period> overlappingList = Arrays.asList(new Period(2, 3), new Period(4, 6), new Period(5, 8));
+        assertEquals(2, new Period(1, 5).occurences(overlappingList));
+
+        // Test occurrences with the same start or end
+        List<Period> sameStartEndList = Arrays.asList(new Period(5, 8));
+        assertEquals(0, new Period(1, 5).occurences(sameStartEndList)); //0
     }
 
     // Commit 1

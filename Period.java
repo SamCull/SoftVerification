@@ -1,10 +1,11 @@
 package cm;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Period {
-     private int startHour;
-     private int endHour;
+    private int startHour;
+    private int endHour;
 
     public Period(int start, int end) {
         if (start >= end) {
@@ -17,8 +18,10 @@ public class Period {
         this.endHour = end;
     }
 
+
     /**
      * checks if a given hour is within the period
+     *
      * @param hour the start of the hour to check
      * @return true if the hour is within the period
      */
@@ -38,6 +41,7 @@ public class Period {
 
     /**
      * The duration of a period
+     *
      * @return the number of whole hours a this period covers
      */
     public int duration() {
@@ -46,6 +50,7 @@ public class Period {
 
     /**
      * Returns the numbers of hours this period is included in the list
+     *
      * @param list the list of periods to check
      * @return the number of full hours covered by this period
      */
@@ -60,6 +65,17 @@ public class Period {
     }
 
     public boolean overlaps(Period period) {
-        return this.endHour>period.startHour && this.startHour<period.endHour;
+        return this.endHour > period.startHour && this.startHour < period.endHour;
+    }
+
+    public boolean isValidPeriods(List<Period> validPeriods) {
+        for (int i = 0; i < validPeriods.size(); i++) {
+            for (int j = i + 1; j < validPeriods.size(); j++) {
+                if (validPeriods.get(i).overlaps(validPeriods.get(j))) {
+                    return false; // Overlapping periods found
+                }
+            }
+        }
+        return true;
     }
 }

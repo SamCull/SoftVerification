@@ -90,9 +90,21 @@ public class Rate {
     public BigDecimal calculate(Period periodStay) {
         int normalRateHours = periodStay.occurences(normal);
         int reducedRateHours = periodStay.occurences(reduced);
-        if (this.kind==CarParkKind.VISITOR) return BigDecimal.valueOf(0);
-        return (this.hourlyNormalRate.multiply(BigDecimal.valueOf(normalRateHours))).add(
-                this.hourlyReducedRate.multiply(BigDecimal.valueOf(reducedRateHours)));
-    }
 
+        // Apply reduction based on CarParkKind
+        if (this.kind == CarParkKind.MANAGEMENT) {
+            BigDecimal totalCost = this.hourlyNormalRate.multiply(BigDecimal.valueOf(normalRateHours))
+                    .add(this.hourlyReducedRate.multiply(BigDecimal.valueOf(reducedRateHours)));
+
+            // Apply reduction
+            return totalCost.min(new BigDecimal(5.00));
+        }
+
+        // For other kinds, calculate without reduction
+        return this.hourlyNormalRate.multiply(BigDecimal.valueOf(normalRateHours))
+                .add(this.hourlyReducedRate.multiply(BigDecimal.valueOf(reducedRateHours)));
+    }
 }
+
+
+
