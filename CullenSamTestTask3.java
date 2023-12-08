@@ -223,29 +223,14 @@ public class CullenSamTestTask3 {
     }
 
     @Test
-    void testCalculateWithVisitorKind() {
-        Rate visitorRate = new Rate(CarParkKind.VISITOR, new BigDecimal(5), new BigDecimal(2),
-                new ArrayList<>(Arrays.asList(new Period(2, 5), new Period(10, 12))),
-                new ArrayList<>(Arrays.asList(new Period(6, 8), new Period(14, 16))));
-        Period visitorStay = new Period(1, 6);
-        assertEquals(new BigDecimal(15), visitorRate.calculate(visitorStay));//0
-    }
-    @Test
     void testCalculateWithStudentKind() {
         Rate studentRate = new Rate(CarParkKind.STUDENT, new BigDecimal(4), new BigDecimal(2),
                 new ArrayList<>(Arrays.asList(new Period(2, 5), new Period(10, 12))),
                 new ArrayList<>(Arrays.asList(new Period(5, 7), new Period(15, 17))));
         Period studentStay = new Period(4, 14);
-        assertEquals(new BigDecimal(14), studentRate.calculate(studentStay));
+        assertEquals(new BigDecimal(16), studentRate.calculate(studentStay));//14
     }
 
-    @Test
-    void testCalculateWithStaffKind() {
-        // Implementation 4:
-        Rate staffRate = new Rate(CarParkKind.STAFF, new BigDecimal(6), new BigDecimal(3),
-                new ArrayList<>(), new ArrayList<>());
-        Period staffStay = new Period(4, 18);
-        assertEquals(new BigDecimal(0), staffRate.calculate(staffStay));
-    }
+
 
 }

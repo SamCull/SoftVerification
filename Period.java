@@ -45,8 +45,12 @@ public class Period {
      * @return the number of whole hours a this period covers
      */
     public int duration() {
-        return this.endHour - this.startHour;
+        if (startHour >= endHour) {
+            throw new IllegalArgumentException("Invalid period: negative or zero duration");
+        }
+        return endHour - startHour;
     }
+
 
     /**
      * Returns the numbers of hours this period is included in the list
