@@ -39,7 +39,9 @@ public class Rate {
         if (this.kind == CarParkKind.STAFF && (!isValidPeriods(reducedPeriods) || !isValidPeriods(normalPeriods) || !isValidPeriods(reducedPeriods, normalPeriods))) {
             throw new IllegalArgumentException("The periods overlap for STAFF rate");
         }
-
+        if (this.kind == CarParkKind.MANAGEMENT && (!isValidPeriods(reducedPeriods) || !isValidPeriods(normalPeriods) || !isValidPeriods(reducedPeriods, normalPeriods))) {
+            throw new IllegalArgumentException("The periods overlap for MANAGEMENT rate");
+        }
 
 
 
