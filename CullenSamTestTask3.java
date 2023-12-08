@@ -238,6 +238,14 @@ public class CullenSamTestTask3 {
         Period visitorStay = new Period(1, 6);
         assertEquals(new BigDecimal(15), visitorRate.calculate(visitorStay));//0
     }
+    @Test
+    void testCalculateWithStaffKind() {
+
+        Rate staffRate = new Rate(CarParkKind.STAFF, new BigDecimal(6), new BigDecimal(3),
+                new ArrayList<>(), new ArrayList<>());
+        Period staffStay = new Period(4, 18);
+        assertEquals(new BigDecimal(0), staffRate.calculate(staffStay));
+    }
 
 
 }
