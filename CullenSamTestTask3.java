@@ -197,5 +197,16 @@ public class CullenSamTestTask3 {
         assertEquals(new BigDecimal(5.00), managementRate.calculate(managementStay)); //28
     }
 
+    @Test
+    public void testInvalidManagementRate() {
+        ArrayList<Period> normalPeriods = new ArrayList<>();
+        normalPeriods.add(new Period(2, 5));
+        ArrayList<Period> reducedPeriods = new ArrayList<>();
+        reducedPeriods.add(new Period(4, 7));
 
+        // This should throw an exception due to overlapping periods
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Rate(CarParkKind.MANAGEMENT, new BigDecimal(8), new BigDecimal(4), normalPeriods, reducedPeriods);
+        });
+    }
 }

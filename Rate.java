@@ -30,12 +30,17 @@ public class Rate {
         if (!isValidPeriods(reducedPeriods, normalPeriods)) {
             throw new IllegalArgumentException("The periods overlaps");
         }
+        if (this.kind == CarParkKind.MANAGEMENT && !isValidPeriods(reducedPeriods, normalPeriods)) {
+            throw new IllegalArgumentException("The periods overlap for MANAGEMENT rate");
+        }
         this.kind = kind;
         this.hourlyNormalRate = normalRate;
         this.hourlyReducedRate = reducedRate;
         this.reduced = reducedPeriods;
         this.normal = normalPeriods;
     }
+
+
 
     /**
      * Checks if two collections of periods are valid together
