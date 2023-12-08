@@ -209,4 +209,10 @@ public class CullenSamTestTask3 {
             new Rate(CarParkKind.MANAGEMENT, new BigDecimal(8), new BigDecimal(4), normalPeriods, reducedPeriods);
         });
     }
+
+    @Test
+    void testOccurrencesWithSameStartEnd() {
+        List<Period> sameStartEndList = Arrays.asList(new Period(5, 8));
+        assertEquals(1, new Period(1, 5).occurences(sameStartEndList)); //1
+    }
 }
