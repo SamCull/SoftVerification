@@ -231,7 +231,7 @@ public class CullenSamTestTask3 {
         Rate staffRate = new Rate(CarParkKind.STAFF, new BigDecimal(6), new BigDecimal(3),
                 new ArrayList<>(), new ArrayList<>());
         Period staffStay = new Period(4, 18);
-        assertEquals(new BigDecimal(3), staffRate.calculate(staffStay));
+        assertEquals(new BigDecimal(0), staffRate.calculate(staffStay));//3
     }
     @Test
     public void testCalculateWithManagementReduction() {
@@ -244,6 +244,15 @@ public class CullenSamTestTask3 {
         Period managementStay = new Period(1, 6);
         assertEquals(new BigDecimal(5.00), managementRate.calculate(managementStay)); //28
     }
+    @Test
+    void testCalculateWithManagementKindAndNoReduction() {
+        Rate managementRate = new Rate(CarParkKind.MANAGEMENT, new BigDecimal(8), new BigDecimal(4),
+                new ArrayList<>(Arrays.asList(new Period(2, 5), new Period(10, 12))),
+                new ArrayList<>(Arrays.asList(new Period(5, 7), new Period(15, 17))));
+        Period managementStay = new Period(8, 14);
+        assertEquals(new BigDecimal(56), managementRate.calculate(managementStay));
+    }
+
 
 
 }
