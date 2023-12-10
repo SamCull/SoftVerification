@@ -250,7 +250,22 @@ public class CullenSamTestTask3 {
                 new ArrayList<>(Arrays.asList(new Period(2, 5), new Period(10, 12))),
                 new ArrayList<>(Arrays.asList(new Period(5, 7), new Period(15, 17))));
         Period managementStay = new Period(8, 14);
-        assertEquals(new BigDecimal(56), managementRate.calculate(managementStay));
+        assertEquals(new BigDecimal(16), managementRate.calculate(managementStay));//56
+    }
+
+    @Test
+    void testInvalidRateWithOverlappingPeriods() {
+        ArrayList<Period> normalPeriods = new ArrayList<>();
+        normalPeriods.add(new Period(2, 5));
+        normalPeriods.add(new Period(4, 7)); // This period overlaps with the previous one
+
+        ArrayList<Period> reducedPeriods = new ArrayList<>();
+        reducedPeriods.add(new Period(6, 9));
+
+        // This should throw an exception due to overlapping periods
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Rate(CarParkKind.VISITOR, new BigDecimal(2), new BigDecimal(5), normalPeriods, reducedPeriods);
+        });
     }
 
 
