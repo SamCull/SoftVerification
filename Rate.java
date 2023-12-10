@@ -30,19 +30,6 @@ public class Rate {
         if (!isValidPeriods(reducedPeriods, normalPeriods)) {
             throw new IllegalArgumentException("The periods overlaps");
         }
-        if (this.kind == CarParkKind.STUDENT && (!isValidPeriods(reducedPeriods) || !isValidPeriods(normalPeriods) || !isValidPeriods(reducedPeriods, normalPeriods))) {
-            throw new IllegalArgumentException("The periods overlap for STUDENT rate");
-        }
-        if (this.kind == CarParkKind.VISITOR && (!isValidPeriods(reducedPeriods) || !isValidPeriods(normalPeriods) || !isValidPeriods(reducedPeriods, normalPeriods))) {
-            throw new IllegalArgumentException("The periods overlap for VISITOR rate");
-        }
-        if (this.kind == CarParkKind.STAFF && (!isValidPeriods(reducedPeriods) || !isValidPeriods(normalPeriods) || !isValidPeriods(reducedPeriods, normalPeriods))) {
-            throw new IllegalArgumentException("The periods overlap for STAFF rate");
-        }
-        if (this.kind == CarParkKind.MANAGEMENT && (!isValidPeriods(reducedPeriods) || !isValidPeriods(normalPeriods) || !isValidPeriods(reducedPeriods, normalPeriods))) {
-            throw new IllegalArgumentException("The periods overlap for MANAGEMENT rate");
-        }
-
 
 
 
@@ -65,10 +52,25 @@ public class Rate {
         Boolean isValid = true;
         int i = 0;
         while (i < periods1.size() && isValid) {
-            isValid = isValidPeriod(periods1.get(i), periods2);
+            isValid = isValidPeriod(periods1.get(i), periods2) && !overlapsWithExistingPeriod(periods1.get(i), periods1, i);
             i++;
         }
         return isValid;
+    }
+    /**
+     * Checks if a new period overlaps with any existing periods in the list
+     * @param newPeriod
+     * @param list
+     * @param currentIndex
+     * @return true if the new period overlaps with any existing periods
+     */
+    private boolean overlapsWithExistingPeriod(Period newPeriod, List<Period> list, int currentIndex) {
+        for (int i = 0; i < list.size(); i++) {
+            if (i != currentIndex && newPeriod.overlaps(list.get(i))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -111,11 +113,17 @@ public class Rate {
 
         // Apply reduction based on CarParkKind
         if (this.kind == CarParkKind.MANAGEMENT) {
-            BigDecimal totalCost = this.hourlyNormalRate.multiply(BigDecimal.valueOf(normalRateHours))
-                    .add(this.hourlyReducedRate.multiply(BigDecimal.valueOf(reducedRateHours)));
+            if (reducedRateHours > 0) {
+                // Apply reduction if there are reduced rate hours
+                BigDecimal totalCost = this.hourlyNormalRate.multiply(BigDecimal.valueOf(normalRateHours))
+                        .add(this.hourlyReducedRate.multiply(BigDecimal.valueOf(reducedRateHours)));
 
-            // Apply reduction
-            return totalCost.min(new BigDecimal(5.00));
+                // Apply reduction
+                return totalCost.min(new BigDecimal(5.00));
+            } else {
+                // No reduction for MANAGEMENT with no reduced rate hours
+                return this.hourlyNormalRate.multiply(BigDecimal.valueOf(normalRateHours));
+            }
         } else if (this.kind == CarParkKind.VISITOR) {
             // Apply rates for Visitor kind
             return this.hourlyNormalRate.multiply(BigDecimal.valueOf(normalRateHours))
@@ -126,6 +134,7 @@ public class Rate {
         return this.hourlyNormalRate.multiply(BigDecimal.valueOf(normalRateHours))
                 .add(this.hourlyReducedRate.multiply(BigDecimal.valueOf(reducedRateHours)));
     }
+
 
 }
 
