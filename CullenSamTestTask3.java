@@ -42,31 +42,33 @@ public class CullenSamTestTask3 {
 
     // Checks if normalRate / reducedRate is negative or overlaps
     @Test
-    public void testInvalidRate() {
+    void testInvalidRate() {
         ArrayList<Period> normalPeriods = new ArrayList<>();
         normalPeriods.add(new Period(2, 5));
         normalPeriods.add(new Period(10, 12));
         normalPeriods.add(new Period(18, 20));
 
-
         ArrayList<Period> reducedPeriods = new ArrayList<>();
         reducedPeriods.add(new Period(5, 7));
         reducedPeriods.add(new Period(14, 16));
-
 
         // This should throw an exception due to an invalid rate
         assertThrows(IllegalArgumentException.class, () -> {
             new Rate(CarParkKind.VISITOR, new BigDecimal(2), new BigDecimal(5), normalPeriods, reducedPeriods);
         });
 
-
         // Test invalid rate where periods overlap
         ArrayList<Period> overlappingPeriods = new ArrayList<>();
         overlappingPeriods.add(new Period(2, 5));
         overlappingPeriods.add(new Period(4, 6));
 
-
         assertThrows(IllegalArgumentException.class, () -> new Rate(CarParkKind.VISITOR, new BigDecimal(5), new BigDecimal(2), overlappingPeriods, overlappingPeriods));
+
+        // Test invalid rate where normalRate equals reducedRate
+        ArrayList<Period> equalRatesPeriods = new ArrayList<>();
+        equalRatesPeriods.add(new Period(2, 5));
+
+        assertThrows(IllegalArgumentException.class, () -> new Rate(CarParkKind.VISITOR, new BigDecimal(5), new BigDecimal(5), equalRatesPeriods, new ArrayList<>()));
     }
     @Test
     public void testIsValidPeriods() {
