@@ -140,7 +140,16 @@ public class Rate {
                 return totalCost.compareTo(reductionThreshold) <= 0 ?
                         totalCost.subtract(freeThreshold) :
                         reductionThreshold.add((totalCost.subtract(reductionThreshold)).multiply(fiftyPercent));
+            case STUDENT:
+                // 33% reduction on any amount above 5.50
+                BigDecimal studentReductionThreshold = new BigDecimal(5.50);
+                BigDecimal thirtyThreePercent = new BigDecimal(0.33);
+
+                return totalCost.compareTo(studentReductionThreshold) <= 0 ?
+                        totalCost :
+                        studentReductionThreshold.add((totalCost.subtract(studentReductionThreshold)).multiply(thirtyThreePercent));
+
         }
-
-
+        return totalCost;
+    }
 }
