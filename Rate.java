@@ -31,8 +31,6 @@ public class Rate {
             throw new IllegalArgumentException("The periods overlaps");
         }
 
-
-
         this.kind = kind;
         this.hourlyNormalRate = normalRate;
         this.hourlyReducedRate = reducedRate;
@@ -40,10 +38,15 @@ public class Rate {
         this.normal = normalPeriods;
     }
 
-
-
     /**
      * Checks if two collections of periods are valid together
+     * @param periods1
+     * @param periods2
+     * @return true if the two collections of periods are valid together
+     */
+    /**
+     * Checks if two collections of periods are valid together
+     *
      * @param periods1
      * @param periods2
      * @return true if the two collections of periods are valid together
@@ -57,8 +60,10 @@ public class Rate {
         }
         return isValid;
     }
+
     /**
      * Checks if a new period overlaps with any existing periods in the list
+     *
      * @param newPeriod
      * @param list
      * @param currentIndex
@@ -74,29 +79,28 @@ public class Rate {
     }
 
     /**
-     * checks if a collection of periods is valid
+     * Checks if a collection of periods is valid
+     *
      * @param list the collection of periods to check
      * @return true if the periods do not overlap
      */
     private Boolean isValidPeriods(ArrayList<Period> list) {
         Boolean isValid = true;
         if (list.size() >= 2) {
-            Period secondPeriod;
-            int i = 0;
-            int lastIndex = list.size()-1;
-            while (i < lastIndex && isValid) {
-                isValid = isValidPeriod(list.get(i), ((List<Period>)list).subList(i + 1, lastIndex+1));
-                i++;
+            int lastIndex = list.size() - 1;
+            for (int i = 0; i < lastIndex && isValid; i++) {
+                isValid = isValidPeriod(list.get(i), list.subList(i + 1, lastIndex + 1));
             }
         }
         return isValid;
     }
 
     /**
-     * checks if a period is a valid addition to a collection of periods
+     * Checks if a period is a valid addition to a collection of periods
+     *
      * @param period the Period addition
-     * @param list the collection of periods to check
-     * @return true if the period does not overlap in the collecton of periods
+     * @param list   the collection of periods to check
+     * @return true if the period does not overlap in the collection of periods
      */
     private Boolean isValidPeriod(Period period, List<Period> list) {
         Boolean isValid = true;
@@ -107,36 +111,20 @@ public class Rate {
         }
         return isValid;
     }
+
     public BigDecimal calculate(Period periodStay) {
         int normalRateHours = periodStay.occurences(normal);
         int reducedRateHours = periodStay.occurences(reduced);
 
-        // Apply reduction based on CarParkKind
-        if (this.kind == CarParkKind.MANAGEMENT) {
-            if (reducedRateHours > 0) {
-                // Apply reduction if there are reduced rate hours
-                BigDecimal totalCost = this.hourlyNormalRate.multiply(BigDecimal.valueOf(normalRateHours))
-                        .add(this.hourlyReducedRate.multiply(BigDecimal.valueOf(reducedRateHours)));
-
-                // Apply reduction
-                return totalCost.min(new BigDecimal(5.00));
-            } else {
-                // No reduction for MANAGEMENT with no reduced rate hours
-                return this.hourlyNormalRate.multiply(BigDecimal.valueOf(normalRateHours));
-            }
-        } else if (this.kind == CarParkKind.VISITOR) {
-            // Apply rates for Visitor kind
-            return this.hourlyNormalRate.multiply(BigDecimal.valueOf(normalRateHours))
-                    .add(this.hourlyReducedRate.multiply(BigDecimal.valueOf(reducedRateHours)));
-        }
-
-        // For other kinds, calculate without reduction
-        return this.hourlyNormalRate.multiply(BigDecimal.valueOf(normalRateHours))
+        BigDecimal totalCost = this.hourlyNormalRate.multiply(BigDecimal.valueOf(normalRateHours))
                 .add(this.hourlyReducedRate.multiply(BigDecimal.valueOf(reducedRateHours)));
+
+        if (this.kind == CarParkKind.MANAGEMENT) {
+            // Apply reduction for MANAGEMENT kind
+            return totalCost.min(new BigDecimal(5.00));
+        } else {
+            // For VISITOR and other kinds, return the total cost without reduction
+            return totalCost;
+        }
     }
-
-
 }
-
-
-

@@ -250,7 +250,7 @@ public class CullenSamTestTask3 {
                 new ArrayList<>(Arrays.asList(new Period(2, 5), new Period(10, 12))),
                 new ArrayList<>(Arrays.asList(new Period(5, 7), new Period(15, 17))));
         Period managementStay = new Period(8, 14);
-        assertEquals(new BigDecimal(16), managementRate.calculate(managementStay));//56
+        assertEquals(new BigDecimal(5), managementRate.calculate(managementStay));//16
     }
 
     @Test
@@ -267,7 +267,43 @@ public class CullenSamTestTask3 {
             new Rate(CarParkKind.VISITOR, new BigDecimal(2), new BigDecimal(5), normalPeriods, reducedPeriods);
         });
     }
+//
+@Test
+void testInvalidRateWithNegativeNormalRate() {
+    ArrayList<Period> normalPeriods = new ArrayList<>();
+    normalPeriods.add(new Period(2, 5));
+    ArrayList<Period> reducedPeriods = new ArrayList<>();
+    reducedPeriods.add(new Period(5, 7));
 
+    // This should throw an exception due to negative normal rate
+    assertThrows(IllegalArgumentException.class, () -> new Rate(CarParkKind.STUDENT, new BigDecimal(-5), new BigDecimal(2), normalPeriods, reducedPeriods));
+}
+
+    @Test
+    void testInvalidRateWithNullPeriods() {
+        // This should throw an exception due to null periods
+        assertThrows(IllegalArgumentException.class, () -> new Rate(CarParkKind.VISITOR, new BigDecimal(2), new BigDecimal(5), null, null));
+    }
+
+    @Test
+    void testInvalidRateWithNullRates() {
+        ArrayList<Period> normalPeriods = new ArrayList<>();
+        normalPeriods.add(new Period(2, 5));
+        ArrayList<Period> reducedPeriods = new ArrayList<>();
+        reducedPeriods.add(new Period(5, 7));
+
+        // This should throw an exception due to null rates
+        assertThrows(IllegalArgumentException.class, () -> new Rate(CarParkKind.VISITOR, null, null, normalPeriods, reducedPeriods));
+    }
+
+    @Test
+    void testCalculateWithEmptyPeriods() {
+        Rate visitorRate = new Rate(CarParkKind.VISITOR, new BigDecimal(5), new BigDecimal(2), new ArrayList<>(), new ArrayList<>());
+        Period visitorStay = new Period(1, 6);
+
+        // The result should be zero since there are no defined periods
+        assertEquals(BigDecimal.ZERO, visitorRate.calculate(visitorStay));
+    }
 
 
 }
