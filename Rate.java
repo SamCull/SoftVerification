@@ -69,7 +69,7 @@ public class Rate {
      * @param currentIndex
      * @return true if the new period overlaps with any existing periods
      */
-    private boolean overlapsWithExistingPeriod(Period newPeriod, List<Period> list, int currentIndex) {
+     boolean overlapsWithExistingPeriod(Period newPeriod, List<Period> list, int currentIndex) {
         for (int i = 0; i < list.size(); i++) {
             if (i != currentIndex && newPeriod.overlaps(list.get(i))) {
                 return true;

@@ -86,6 +86,23 @@ public class CullenSamTestTask3 {
         ArrayList<Period> emptyList = new ArrayList<>();
         assertTrue(new Period(1, 5).isValidPeriods(emptyList));
     }
+    @Test
+    void testIsValidPeriodsWithOverlappingList() {
+        ArrayList<Period> overlappingList = new ArrayList<>();
+        overlappingList.add(new Period(2, 5));
+        overlappingList.add(new Period(4, 7));
+
+        // New test for overlapping list
+        assertFalse(new Period(1, 5).isValidPeriods(overlappingList));
+    }
+    @Test
+    void testOverlapsWithExistingPeriodWithNegativeIndex() {
+        List<Period> list = Arrays.asList(new Period(2, 5), new Period(6, 9));
+
+        // New test for negative index
+        assertFalse(new Rate(CarParkKind.STUDENT, new BigDecimal(4), new BigDecimal(2), new ArrayList<>(), new ArrayList<>())
+                .overlapsWithExistingPeriod(new Period(3, 7), list, -1));
+    }
 
 
     // Checks if the constructor handles empty periods correctly
