@@ -290,4 +290,17 @@ void testInvalidRateWithNegativeNormalRate() {
         // The result should be 0.00 (free) since there are no defined periods
         assertEquals(BigDecimal.ZERO, staffRate.calculate(staffStay));
     }
+    @Test
+    void testCalculateWithManagementKindAndMinimumPayable() {
+        ArrayList<Period> normalPeriods = new ArrayList<>();
+        normalPeriods.add(new Period(2, 5));
+        ArrayList<Period> reducedPeriods = new ArrayList<>();
+        reducedPeriods.add(new Period(5, 7));
+
+        Rate managementRate = new Rate(CarParkKind.MANAGEMENT, new BigDecimal(8), new BigDecimal(4), normalPeriods, reducedPeriods);
+        Period managementStay = new Period(1, 6);
+
+        // The result should be 5.00 (minimum payable)
+        assertEquals(new BigDecimal(5.00), managementRate.calculate(managementStay));
+    }
 }
