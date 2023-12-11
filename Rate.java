@@ -121,10 +121,26 @@ public class Rate {
 
         if (this.kind == CarParkKind.MANAGEMENT) {
             // Apply reduction for MANAGEMENT kind
-            return totalCost.min(new BigDecimal(5.00));
+            return totalCost.max(new BigDecimal(5.00)); // Updated to use max instead of min
         } else {
-            // For VISITOR and other kinds, return the total cost without reduction
-            return totalCost;
+            // For VISITOR and other kinds, apply reduction based on the kind
+            return applyReduction(totalCost);
         }
+
     }
+
+    private BigDecimal applyReduction(BigDecimal totalCost) {
+        switch (this.kind) {
+            case VISITOR:
+                // The first 10.00 is free, 50% reduction above that
+                BigDecimal reductionThreshold = new BigDecimal(10.00);
+                BigDecimal freeThreshold = new BigDecimal(0.00);
+                BigDecimal fiftyPercent = new BigDecimal(0.50);
+
+                return totalCost.compareTo(reductionThreshold) <= 0 ?
+                        totalCost.subtract(freeThreshold) :
+                        reductionThreshold.add((totalCost.subtract(reductionThreshold)).multiply(fiftyPercent));
+        }
+
+
 }
