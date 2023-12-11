@@ -269,7 +269,7 @@ void testInvalidRateWithNegativeNormalRate() {
         Period visitorStay = new Period(1, 6);
 
         // Result should be 15.00 - 10.00 (free) = 5.00
-        assertEquals(new BigDecimal(12.5), visitorRate.calculate(visitorStay));//5
+        assertEquals(new BigDecimal(5), visitorRate.calculate(visitorStay));//5
     }
     @Test
     void testCalculateWithStudentKindAndReduction() {
@@ -280,5 +280,14 @@ void testInvalidRateWithNegativeNormalRate() {
 
         // The result should be 16.00 - 5.50 (33% reduction) = 10.50
         assertEquals(new BigDecimal(10.50), studentRate.calculate(studentStay));
+    }
+    @Test
+    void testCalculateWithStaffKindAndMaximumPayable() {
+        Rate staffRate = new Rate(CarParkKind.STAFF, new BigDecimal(6), new BigDecimal(3),
+                new ArrayList<>(), new ArrayList<>());
+        Period staffStay = new Period(4, 18);
+
+        // The result should be 0.00 (free) since there are no defined periods
+        assertEquals(BigDecimal.ZERO, staffRate.calculate(staffStay));
     }
 }
