@@ -105,16 +105,16 @@ public class CullenSamTestTask3 {
 
     // Checks for a scenario where normalRate or reducedRate is negative
     @Test
-    public void testInvalidRateWithNegativeRate() {
+    void testInvalidRateWithNegativeRate() {
         ArrayList<Period> normalPeriods = new ArrayList<>();
         normalPeriods.add(new Period(2, 5));
         ArrayList<Period> reducedPeriods = new ArrayList<>();
         reducedPeriods.add(new Period(5, 7));
 
-
-        // This should throw an exception due to a negative rate
+        // This should throw an exception due to negative normal rate
         assertThrows(IllegalArgumentException.class, () -> new Rate(CarParkKind.STUDENT, new BigDecimal(-5), new BigDecimal(2), normalPeriods, reducedPeriods));
     }
+
 
     // Checks for the scenario where normalRate is equal to reducedRate
     @Test
