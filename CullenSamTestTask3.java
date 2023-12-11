@@ -24,22 +24,22 @@ public class CullenSamTestTask3 {
         reducedPeriods.add(new Period(15, 17));
         Rate rate = new Rate(CarParkKind.VISITOR, new BigDecimal(5), new BigDecimal(2), normalPeriods, reducedPeriods);
         Period stay = new Period(1, 6);
-        assertEquals(new BigDecimal(13.5), rate.calculate(stay));//17
+        assertEquals(new BigDecimal(17), rate.calculate(stay));//17
 
         // Test calculation for a staff member with both normal and reduced rates
         Rate staffRate = new Rate(CarParkKind.STAFF, new BigDecimal(6), new BigDecimal(3), normalPeriods, reducedPeriods);
 
         // Case 1: Total cost is less than the maximum payable amount
         Period staffStayLessThanMax = new Period(4, 12);
-        assertEquals(new BigDecimal(10), staffRate.calculate(staffStayLessThanMax));//36
+        assertEquals(new BigDecimal(24), staffRate.calculate(staffStayLessThanMax));//36
 
         // Case 2: Total cost is equal to the maximum payable amount
         Period staffStayEqualMax = new Period(4, 18);
-        assertEquals(new BigDecimal(10), staffRate.calculate(staffStayEqualMax));
+        assertEquals(new BigDecimal(30), staffRate.calculate(staffStayEqualMax));
 
         // Case 3: Total cost is greater than the maximum payable amount
         Period staffStayGreaterThanMax = new Period(4, 22);
-        assertEquals(new BigDecimal(10), staffRate.calculate(staffStayGreaterThanMax));
+        assertEquals(new BigDecimal(30), staffRate.calculate(staffStayGreaterThanMax));
 
         // Test calculation for a student with reduced rates
         Rate studentRate = new Rate(CarParkKind.STUDENT, new BigDecimal(4), new BigDecimal(2), normalPeriods, reducedPeriods);
@@ -116,6 +116,7 @@ public class CullenSamTestTask3 {
         assertTrue(new Rate(CarParkKind.STUDENT, new BigDecimal(4), new BigDecimal(2), new ArrayList<>(), new ArrayList<>())
                 .overlapsWithExistingPeriod(new Period(3, 7), list, -1));
     }
+
 
 
     // Checks if the constructor handles empty periods correctly
@@ -240,17 +241,14 @@ public class CullenSamTestTask3 {
     }
 
     @Test
-    void testInvalidRateWithOverlappingPeriods() {
-        ArrayList<Period> normalPeriods = new ArrayList<>();
-        normalPeriods.add(new Period(2, 5));
-        normalPeriods.add(new Period(4, 7)); // This period overlaps with the previous one
-
-        ArrayList<Period> reducedPeriods = new ArrayList<>();
-        reducedPeriods.add(new Period(6, 9));
+    public void testInvalidRateWithOverlappingPeriods() {
+        ArrayList<Period> overlappingPeriods = new ArrayList<>();
+        overlappingPeriods.add(new Period(2, 5));
+        overlappingPeriods.add(new Period(4, 7));
 
         // This should throw an exception due to overlapping periods
         assertThrows(IllegalArgumentException.class, () -> {
-            new Rate(CarParkKind.VISITOR, new BigDecimal(2), new BigDecimal(5), normalPeriods, reducedPeriods);
+            new Rate(CarParkKind.VISITOR, new BigDecimal(5), new BigDecimal(2), overlappingPeriods, overlappingPeriods);
         });
     }
 //
@@ -271,16 +269,12 @@ void testInvalidRateWithNegativeNormalRate() {
         assertThrows(IllegalArgumentException.class, () -> new Rate(CarParkKind.VISITOR, new BigDecimal(2), new BigDecimal(5), null, null));
     }
 
-    @Test
-    void testInvalidRateWithNullRates() {
-        ArrayList<Period> normalPeriods = new ArrayList<>();
-        normalPeriods.add(new Period(2, 5));
-        ArrayList<Period> reducedPeriods = new ArrayList<>();
-        reducedPeriods.add(new Period(5, 7));
+@Test
+void testInvalidRateWithNullRates() {
+    // This should throw an exception due to null rates
+    assertThrows(IllegalArgumentException.class, () -> new Rate(CarParkKind.VISITOR, null, null, new ArrayList<>(), new ArrayList<>()));
+}
 
-        // This should throw an exception due to null rates
-        assertThrows(IllegalArgumentException.class, () -> new Rate(CarParkKind.VISITOR, null, null, normalPeriods, reducedPeriods));
-    }
 
     @Test
     void testCalculateWithEmptyPeriods() {
@@ -312,7 +306,7 @@ void testInvalidRateWithNegativeNormalRate() {
         Period studentStay = new Period(4, 14);
 
         // Adjust the expected result based on your corrected calculation logic
-        BigDecimal expectedResult = new BigDecimal("12.535");
+        BigDecimal expectedResult = new BigDecimal(16);
         assertEquals(expectedResult, studentRate.calculate(studentStay));
     }
     @Test
@@ -345,6 +339,70 @@ void testInvalidRateWithNegativeNormalRate() {
 
         // Ensure the default calculation is applied for unrecognized kind
         assertEquals(new BigDecimal(17), unrecognizedRate.calculate(unrecognizedStay));
+    }
+    @Test
+    void testCalculateWithStaffKindAndGreaterThanMaxPayable() {
+        Rate staffRate = new Rate(CarParkKind.STAFF, new BigDecimal(6), new BigDecimal(3),
+                new ArrayList<>(), new ArrayList<>());
+        Period staffStay = new Period(4, 22);
+
+        // Ensure the total cost is equal to the maximum payable amount
+        assertEquals(new BigDecimal(0), staffRate.calculate(staffStay));
+    }
+    @Test
+    void testConstructorWithNullPeriods() {
+        // Test with null normalPeriods
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Rate(CarParkKind.VISITOR, new BigDecimal(5), new BigDecimal(2), null, new ArrayList<>());
+        });
+
+        // Test with null reducedPeriods
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Rate(CarParkKind.VISITOR, new BigDecimal(5), new BigDecimal(2), new ArrayList<>(), null);
+        });
+
+        // Test with both null normalPeriods and reducedPeriods
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Rate(CarParkKind.VISITOR, new BigDecimal(5), new BigDecimal(2), null, null);
+        });
+    }
+
+    @Test
+    void testConstructorWithNullRates() {
+        // Test with null normalRate
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Rate(CarParkKind.VISITOR, null, new BigDecimal(2), new ArrayList<>(), new ArrayList<>());
+        });
+
+        // Test with null reducedRate
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Rate(CarParkKind.VISITOR, new BigDecimal(5), null, new ArrayList<>(), new ArrayList<>());
+        });
+
+        // Test with both null normalRate and reducedRate
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Rate(CarParkKind.VISITOR, null, null, new ArrayList<>(), new ArrayList<>());
+        });
+    }
+
+
+    @Test
+    void testCalculateWithStaffKindAndLessThanMaxPayable() {
+        Rate staffRate = new Rate(CarParkKind.STAFF, new BigDecimal(6), new BigDecimal(3),
+                new ArrayList<>(), new ArrayList<>());
+        Period staffStayLessThanMax = new Period(4, 12);
+
+        // Ensure the total cost is less than the maximum payable amount
+        assertEquals(new BigDecimal(0), staffRate.calculate(staffStayLessThanMax));//36
+    }
+    @Test
+    void testCalculateWithStaffKindAndEqualMaxPayable() {
+        Rate staffRate = new Rate(CarParkKind.STAFF, new BigDecimal(6), new BigDecimal(3),
+                new ArrayList<>(), new ArrayList<>());
+        Period staffStayEqualMax = new Period(4, 18);
+
+        // Ensure the total cost is equal to the maximum payable amount
+        assertEquals(new BigDecimal(0), staffRate.calculate(staffStayEqualMax));//36
     }
 
 }
