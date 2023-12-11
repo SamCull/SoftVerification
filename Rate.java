@@ -148,8 +148,14 @@ public class Rate {
                 return totalCost.compareTo(studentReductionThreshold) <= 0 ?
                         totalCost :
                         studentReductionThreshold.add((totalCost.subtract(studentReductionThreshold)).multiply(thirtyThreePercent));
+            case STAFF:
+                // The maximum payable is 10.00 per day
+                BigDecimal staffMaximum = new BigDecimal(10.00);
+                return totalCost.min(staffMaximum);
+
+            default:
+                return totalCost;
 
         }
-        return totalCost;
     }
 }
