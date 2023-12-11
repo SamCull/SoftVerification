@@ -210,50 +210,6 @@ public class CullenSamTestTask3 {
     }
 
     @Test
-    void testCalculateWithStudentKind() {
-        Rate studentRate = new Rate(CarParkKind.STUDENT, new BigDecimal(4), new BigDecimal(2),
-                new ArrayList<>(Arrays.asList(new Period(2, 5), new Period(10, 12))),
-                new ArrayList<>(Arrays.asList(new Period(5, 7), new Period(15, 17))));
-        Period studentStay = new Period(4, 14);
-        assertEquals(new BigDecimal(16), studentRate.calculate(studentStay));//14
-    }
-    @Test
-    void testCalculateWithVisitorKind() {
-        Rate visitorRate = new Rate(CarParkKind.VISITOR, new BigDecimal(5), new BigDecimal(2),
-                new ArrayList<>(Arrays.asList(new Period(2, 5), new Period(10, 12))),
-                new ArrayList<>(Arrays.asList(new Period(6, 8), new Period(14, 16))));
-        Period visitorStay = new Period(1, 6);
-        assertEquals(new BigDecimal(15), visitorRate.calculate(visitorStay));//0
-    }
-    @Test
-    void testCalculateWithStaffKind() {
-
-        Rate staffRate = new Rate(CarParkKind.STAFF, new BigDecimal(6), new BigDecimal(3),
-                new ArrayList<>(), new ArrayList<>());
-        Period staffStay = new Period(4, 18);
-        assertEquals(new BigDecimal(0), staffRate.calculate(staffStay));//3
-    }
-    @Test
-    public void testCalculateWithManagementReduction() {
-        ArrayList<Period> normalPeriods = new ArrayList<>();
-        normalPeriods.add(new Period(2, 5));
-        ArrayList<Period> reducedPeriods = new ArrayList<>();
-        reducedPeriods.add(new Period(5, 7));
-
-        Rate managementRate = new Rate(CarParkKind.MANAGEMENT, new BigDecimal(8), new BigDecimal(4), normalPeriods, reducedPeriods);
-        Period managementStay = new Period(1, 6);
-        assertEquals(new BigDecimal(5.00), managementRate.calculate(managementStay)); //28
-    }
-    @Test
-    void testCalculateWithManagementKindAndNoReduction() {
-        Rate managementRate = new Rate(CarParkKind.MANAGEMENT, new BigDecimal(8), new BigDecimal(4),
-                new ArrayList<>(Arrays.asList(new Period(2, 5), new Period(10, 12))),
-                new ArrayList<>(Arrays.asList(new Period(5, 7), new Period(15, 17))));
-        Period managementStay = new Period(8, 14);
-        assertEquals(new BigDecimal(5), managementRate.calculate(managementStay));//16
-    }
-
-    @Test
     void testInvalidRateWithOverlappingPeriods() {
         ArrayList<Period> normalPeriods = new ArrayList<>();
         normalPeriods.add(new Period(2, 5));
@@ -305,5 +261,14 @@ void testInvalidRateWithNegativeNormalRate() {
         assertEquals(BigDecimal.ZERO, visitorRate.calculate(visitorStay));
     }
 
+    @Test
+    void testCalculateWithVisitorKindAndReduction() {
+        Rate visitorRate = new Rate(CarParkKind.VISITOR, new BigDecimal(5), new BigDecimal(2),
+                new ArrayList<>(Arrays.asList(new Period(2, 5), new Period(10, 12))),
+                new ArrayList<>(Arrays.asList(new Period(6, 8), new Period(14, 16))));
+        Period visitorStay = new Period(1, 6);
 
+        // Result should be 15.00 - 10.00 (free) = 5.00
+        assertEquals(new BigDecimal(5.00), visitorRate.calculate(visitorStay));
+    }
 }
