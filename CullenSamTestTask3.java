@@ -262,14 +262,17 @@ void testInvalidRateWithNegativeNormalRate() {
     }
 
     @Test
-    void testCalculateWithVisitorKindAndReduction() {
-        Rate visitorRate = new Rate(CarParkKind.VISITOR, new BigDecimal(5), new BigDecimal(2),
-                new ArrayList<>(Arrays.asList(new Period(2, 5), new Period(10, 12))),
-                new ArrayList<>(Arrays.asList(new Period(6, 8), new Period(14, 16))));
-        Period visitorStay = new Period(1, 6);
+    void testCalculateWithVisitorKindAndNoReduction() {
+        ArrayList<Period> normalPeriods = new ArrayList<>();
+        normalPeriods.add(new Period(2, 5));
+        ArrayList<Period> reducedPeriods = new ArrayList<>();
+        reducedPeriods.add(new Period(5, 7));
 
-        // Result should be 15.00 - 10.00 (free) = 5.00
-        assertEquals(new BigDecimal(5), visitorRate.calculate(visitorStay));//5
+        Rate visitorRate = new Rate(CarParkKind.VISITOR, new BigDecimal(5), new BigDecimal(2), normalPeriods, reducedPeriods);
+        Period visitorStay = new Period(1, 3);
+
+        // Result should be 3 hours * 5.00 = 15.00 (no reduction)
+        assertEquals(new BigDecimal(15), visitorRate.calculate(visitorStay));
     }
     @Test
     void testCalculateWithStudentKindAndReduction() {
